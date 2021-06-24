@@ -1,0 +1,27 @@
+@use '../variables';
+@use 'modal' as *;
+
+.list__wrapper {
+    position: relative;
+    min-height: 200px;
+    margin-top: 70px;
+    width: 60%;
+    align-self: center;
+}
+
+.list__title {
+    @extend .modal__title;
+}
+
+.list__item {
+    width: 100%;
+    color: variables.$white-color;
+    font-size: 25px;
+    cursor: pointer;
+    font-family: variables.$paragraphs;
+    margin: 15px;
+    list-style: none;
+    @media screen and (max-width: variables.$mobile) {
+        font-size: 18px;
+        }
+}

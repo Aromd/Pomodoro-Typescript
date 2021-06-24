@@ -1,0 +1,24 @@
+@use '../variables';
+
+.navbar {
+    width:100%;
+    height: 80px;
+    border-bottom: 2px solid variables.$secondary-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: variables.$primary-color;
+}
+
+.navbar__logo {
+    color: variables.$light-color;
+    font-size: 48px;
+    font-family: 'Mate SC', serif;
+    font-weight: bold;
+    cursor: pointer;
+    height: fit-content;
+    
+    &:hover {
+        color: variables.$fourth-color;
+    }
+}

@@ -1,0 +1,23 @@
+@use '../variables';
+
+.btn {
+    width: 200px;
+    height: 60px;
+    background-color: variables.$light-color;
+    cursor: pointer;
+    border-radius: 15px;
+    color: variables.$white-color;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
+    font-family: variables.$paragraphs;
+    border: 2px solid variables.$white-color;
+
+    &:hover{
+        background-color: variables.$secondary-color;
+    }
+    
+    @media screen and (max-width: variables.$notebook){
+        margin: 0px 0px 10px 0px;
+    }
+}
