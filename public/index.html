@@ -25,17 +25,17 @@
                 <div class="modal__content">
                     <h3 class="modal__title">Opciones</h3>
                     <hr style="margin-top: -10px;">
-                    <form action="">
+                    <form>
                         <div class="modal__field">
                             <label for="data-pomodoro" class="modal__label">Duración del pomodoro:</label>
-                            <input class="modal__input" id="data-pomodoro" type="number" min="0" max="999">
+                            <input value="" class="modal__input" id="datapomodoro" type="number" min="0" max="999">
                         </div>
                         <div class="modal__field">
                             <label for="data-break" class="modal__label">Duración del descanso:</label>
-                            <input class="modal__input" id="data-break" type="number" min="0" max="999">
+                            <input value="" class="modal__input" id="databreak" type="number" min="0" max="999">
                         </div>
                         <div class="modal__btn">
-                            <button class="btn">Guardar</button>
+                            <button class="btn btn__save" type="submit">Guardar</button>
                         </div>
                     </form>
                 </div>
@@ -43,13 +43,12 @@
         </div>
         <section class="clock__wrapper">
             <div class="clock__container">
-                <p class="clock__time">
-                    <span class="minutes"></span>:<span class="seconds"></span>
-                </p>
+                <p class="clock__time"></p>
             </div>
+            <p class="clock__endtime clock__title-end"></p>
             <div class=clock__buttons>
                 <button class="btn btn__start">Inicio</button>
-                <button class="btn btn__pause">Pausa</button>
+                <button class="btn btn__stop">Detener</button>
                 <button class="btn btn__options">Opciones</button>
             </div>
         </section>
