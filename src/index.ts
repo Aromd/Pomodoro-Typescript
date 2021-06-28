@@ -1,9 +1,13 @@
-const clockTime = document.querySelector('.clock__time') as HTMLParagraphElement;
-const endTime = document.querySelector('.clock__endtime') as HTMLParagraphElement;
+import { displayEndTime, displayTimeLeft } from "./display";
+import { formData } from "./form";
+import { isPomodoro } from "./interface";
+
+export const clockTime = document.querySelector('.clock__time') as HTMLParagraphElement;
+export const endTime = document.querySelector('.clock__endtime') as HTMLParagraphElement;
 const modal = document.querySelector('.modal__wrapper') as HTMLDivElement;
 const closeBtn = document.querySelector('.modal__close img') as HTMLImageElement;
 const optionsBtn = document.querySelector('.btn__options') as HTMLButtonElement;
-const startBtn = document.querySelector('.btn__start') as HTMLButtonElement;
+const startPauseBtn = document.querySelector('.btn__start') as HTMLButtonElement;
 const stopBtn = document.querySelector('.btn__stop') as HTMLButtonElement;
 const form = document.querySelector('form') as HTMLFormElement;
 
@@ -18,69 +22,38 @@ closeBtn.addEventListener('click', () => {
 });
 
 // pomodoro 
-let countdown: NodeJS.Timeout;
-
-//Muestra tiempo restante
-const displayTimeLeft = (seconds: number) => {
-    if(seconds){
-    const minutes = Math.floor(seconds / 60);
-    const remainderSeconds = seconds % 60;
-    const display = `${minutes}:${remainderSeconds < 10 ? "0" : ""}${remainderSeconds}`;
-    clockTime.textContent = display;
-    document.title = (display === "0:00") ? "Pomodoro Finalizado" : display;}
-    else return;
-};
-
-// Muestra hora de finalización
-const displayEndTime = (timestamp: number) => {
-    const end = new Date(timestamp);
-    const hour = end.getHours();
-    const minutes = end.getMinutes();
-    endTime.textContent = `Próximo descanso - ${hour}:${minutes < 10 ? "0" : ""}${minutes}`;
-}
-
-interface isPomodoro {
-    started: boolean;
-    time: number;
-    timer(): void;
-}
+// let secondsLeft: number;
 
 const pomodoro: isPomodoro = {
        started: false,
-       time: 25,
-       timer(){
-           //limpia los timers existentes
-            clearInterval(countdown);
-
-           const now = Date.now();
-           const then = now + (this.time * 60) * 1000;
-           displayTimeLeft(this.time*60);
-           displayEndTime(then);
-
-           countdown = setInterval(() => {
-            const secondsLeft = Math.round((then - Date.now()) / 1000);
-            // Se detiene al llegar a 0
-            if(secondsLeft < 0){
-                clearInterval(countdown);
-                return;
-            }
-            //display
-            displayTimeLeft(secondsLeft);
-           }, 1000);
-       }
+       initialSeconds: 1500,
+       secondsLeft: 1500,
 }
 
-window.onload= () => {displayTimeLeft(25*60)};
+let countdown: NodeJS.Timeout;
 
-const formData = (form: HTMLFormElement) => {
-    const inputs = form.querySelectorAll('input');
-    let values: {[prop: string]: string} = {};
+const timer = (timePomodoro: number) => {
+    //limpia los timers existentes
+     clearInterval(countdown);
 
-    inputs.forEach(input => {
-        values[input.id] = input.value;
-    });
-    return values;
-};
+    const now = Date.now();
+    const then = now + (timePomodoro) * 1000;
+    displayTimeLeft(timePomodoro);
+    displayEndTime(then);
+
+    countdown = setInterval(() => {
+     pomodoro.secondsLeft = Math.round((then - Date.now()) / 1000);
+     // Se detiene al llegar a 0
+     if(pomodoro.secondsLeft < 0){
+         clearInterval(countdown);
+         return;
+     }
+     //display
+     displayTimeLeft(pomodoro.secondsLeft);
+     return pomodoro.secondsLeft;
+    }, 1000);
+}
+
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -88,19 +61,37 @@ form.addEventListener('submit', (e) => {
     const data = formData(form);
     const pomoMinutes = parseInt(data.datapomodoro);
     const breakMinutes = parseInt(data.databreak);
-    pomodoro.time = pomoMinutes;
-    displayTimeLeft(pomoMinutes*60);
+    pomodoro.secondsLeft = pomoMinutes*60;
+    displayTimeLeft(pomodoro.secondsLeft);
     modal.classList.remove('open');
     form.reset();
     endTime.textContent = "";
+    pomodoro.started = false;
+    startPauseBtn.textContent="Inicio";
+    pomodoro.initialSeconds = pomoMinutes*60;
 });
 
-startBtn.addEventListener('click', () => {
-    pomodoro.timer();
+
+startPauseBtn.addEventListener('click', () => {
+    if(!pomodoro.started){
+        pomodoro.started = true;
+        timer(pomodoro.secondsLeft);
+        startPauseBtn.textContent="Pausa"
+    } else {
+        clearInterval(countdown);
+        pomodoro.started = false;
+        endTime.textContent = "";
+        startPauseBtn.textContent="Inicio";
+    }
 });
 
 stopBtn.addEventListener('click', () => {
     clearInterval(countdown);
-    console.log("detener");
+    pomodoro.secondsLeft = pomodoro.initialSeconds;
+    displayTimeLeft(pomodoro.secondsLeft);
+    pomodoro.started = false;
+    startPauseBtn.textContent = "Inicio";
     endTime.textContent = "";
 });
+
+window.onload= () => {displayTimeLeft(pomodoro.secondsLeft)};
